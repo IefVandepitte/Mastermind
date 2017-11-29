@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +40,13 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Code> resultaten = new ArrayList<Code>();
     private Spel spel;
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private Button mDoeGokButton;
+    private ImageButton mGok1ImageButton1;
+    private ImageButton mGok1ImageButton2;
+    private ImageButton mGok1ImageButton3;
+    private ImageButton mGok1ImageButton4;
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -46,33 +54,60 @@ public class MainActivity extends AppCompatActivity {
         spelData = new ParcelableSpelData(spel.getRondeTeller(), spel.getCode(), gokken, resultaten);
         String spelDataString = spelData.toString();
         outState.putParcelable(ParcelableSpelData.SPEL_DATA, spelData);
+        Log.i(TAG, "onSaveInstanceState triggered");
     }
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
             spelData = savedInstanceState.getParcelable(ParcelableSpelData.SPEL_DATA);
+
         }
+        Log.i(TAG, "onRestoreInstanceState triggered");
     }
     @Override
     protected void onResume() {
+        Log.i(TAG, "code:" + spel.getCode().toString());
+        Log.i(TAG, "onResume triggered");
         super.onResume();
-        if (spelData != null) {
-            super.onDestroy();
-            Bundle opgeslagenSpelData = new Bundle();
-            opgeslagenSpelData.putParcelable(ParcelableSpelData.SPEL_DATA, spelData);
-            onCreate(opgeslagenSpelData);
-        }
+//        if (spelData != null) {
+//            super.onDestroy();
+//            Bundle opgeslagenSpelData = new Bundle();
+//            opgeslagenSpelData.putParcelable(ParcelableSpelData.SPEL_DATA, spelData);
+//            onCreate(opgeslagenSpelData);
+//        }
+        if (spelData != null){ int rondeTeller = spelData.getBeurtTeller();
+            visualiseerTeZoekenCode();
+
+                spel.setCode(spelData.getParcelableTeZoekenCode());
+                c= spel.getCode();
+            Log.i(TAG, "code:" + spel.getCode().toString());
+                visualiseerTeZoekenCode();
+            for (int i = 0 ; i < rondeTeller; i++){
+                ParcelableCode gok =  (ParcelableCode)spelData.getParcelableGokken()[i];
+                mGok1ImageButton1.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(0)));
+                mGok1ImageButton2.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(1)));
+                mGok1ImageButton3.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(2)));
+                mGok1ImageButton4.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(3)));
+                vertaalKleurNameNaarTagEnContentDescription(mGok1ImageButton1 ,gok.get(0).getKleur());
+                vertaalKleurNameNaarTagEnContentDescription(mGok1ImageButton2 ,gok.get(1).getKleur());
+                vertaalKleurNameNaarTagEnContentDescription(mGok1ImageButton3 ,gok.get(2).getKleur());
+                vertaalKleurNameNaarTagEnContentDescription(mGok1ImageButton4 ,gok.get(3).getKleur());
+                hersteld = true;
+//                        doeGokButton.setText("Guess");
+                mDoeGokButton.performClick();
+            }}
+
     }
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Spel spel = initSpel(4);
-        final ImageButton gok1ImageButton1 = (ImageButton) findViewById(R.id.gok1ImageButton1);
-        final ImageButton gok1ImageButton2 = (ImageButton) findViewById(R.id.gok1ImageButton2);
-        final ImageButton gok1ImageButton3 = (ImageButton) findViewById(R.id.gok1ImageButton3);
-        final ImageButton gok1ImageButton4 = (ImageButton) findViewById(R.id.gok1ImageButton4);
+        mGok1ImageButton1 = (ImageButton) findViewById(R.id.gok1ImageButton1);
+        mGok1ImageButton2 = (ImageButton) findViewById(R.id.gok1ImageButton2);
+        mGok1ImageButton3 = (ImageButton) findViewById(R.id.gok1ImageButton3);
+        mGok1ImageButton4 = (ImageButton) findViewById(R.id.gok1ImageButton4);
         final ImageButton zwartImageButton = (ImageButton) findViewById(R.id.zwartImageButton);
         final ImageButton witImageButton = (ImageButton) findViewById(R.id.witImageButton);
         final ImageButton roodImageButton = (ImageButton) findViewById(R.id.roodImageButton);
@@ -85,10 +120,9 @@ public class MainActivity extends AppCompatActivity {
         codeImageView2 = (ImageView) findViewById(R.id.code_imageView2);
         codeImageView3 = (ImageView) findViewById(R.id.code_imageView3);
         codeImageView4 = (ImageView) findViewById(R.id.code_imageView4);
-        final Button doeGokButton = (Button) findViewById(R.id.doeGokButton);
-
+        mDoeGokButton = (Button) findViewById(R.id.doeGokButton);
         List<ImageButton> kleurButtons = verzamelKleurbuttons(zwartImageButton, witImageButton, roodImageButton, geelImageButton, blauwImageButton, groenImageButton, bruinImageButton, oranjeImageButton);
-        kleurbuttonClick(gok1ImageButton1, gok1ImageButton2, gok1ImageButton3, gok1ImageButton4, kleurButtons);
+        kleurbuttonClick(mGok1ImageButton1, mGok1ImageButton2, mGok1ImageButton3, mGok1ImageButton4, kleurButtons);
         visualiseerTeZoekenCode();
         final List<List<ImageButton>> resultButtons = verzamelResultButtons();
         final List<List<ImageButton>> resultScoreButtons = verzamelResultaatScoreButtons();
@@ -98,51 +132,27 @@ public class MainActivity extends AppCompatActivity {
 //                maakCode(spel, codeTekstueel);  // TODO: 9/10/2017 aanpassen voor rc1, code mag niet zichtbaar zijn
 //            }
 //        });
-        veranderSequentieDoorklikOpGokImageButton(gok1ImageButton1, gok1ImageButton2, gok1ImageButton3, gok1ImageButton4);
+        veranderSequentieDoorklikOpGokImageButton(mGok1ImageButton1, mGok1ImageButton2, mGok1ImageButton3, mGok1ImageButton4);
 
+        if (savedInstanceState == null){
+            Log.i(TAG, "onCreate triggered zonder bundle");
+            Log.i(TAG, "code:" + spel.getCode().toString());
+        }
 
-//        // TODO: 25/10/2017 toegevoegd om clickevent te lanceren als de bundle niet leeg is
-//        doeGokButton.setText("Continue");
-//        if (savedInstanceState != null){
-//            doeGokButton.performClick();
-//        }
-//        // TODO: 25/10/2017 tot hier
-
-        doeGokButton.setOnClickListener(new View.OnClickListener() {
+        mDoeGokButton.setOnClickListener(new View.OnClickListener() {
            int rondeTeller = 0;
             @Override
+
             public void onClick(View view) {
-                if (verliesSituatie()) return;
 
-// TODO: 25/10/2017 toegevoegd om speldata door te geven
-                if (savedInstanceState != null && !hersteld){
-                    spelData = savedInstanceState.getParcelable(ParcelableSpelData.SPEL_DATA);
-                    int rondeTeller = spelData.getBeurtTeller();
-
-                    for (int i = 0 ; i < rondeTeller; i++){
-                      ParcelableCode gok =  (ParcelableCode)spelData.getParcelableGokken()[i];
-                        gok1ImageButton1.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(0)));
-                        gok1ImageButton2.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(1)));
-                        gok1ImageButton3.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(2)));
-                        gok1ImageButton4.setImageResource(vertaalPionNaarGroteAfbeelding(gok.get(3)));
-                        vertaalKleurNameNaarTagEnContentDescription(gok1ImageButton1 ,gok.get(0).getKleur());
-                        vertaalKleurNameNaarTagEnContentDescription(gok1ImageButton2 ,gok.get(0).getKleur());
-                        vertaalKleurNameNaarTagEnContentDescription(gok1ImageButton3 ,gok.get(0).getKleur());
-                        vertaalKleurNameNaarTagEnContentDescription(gok1ImageButton4 ,gok.get(0).getKleur());
-                        hersteld = true;
-//                        doeGokButton.setText("Guess");
-                        doeGokButton.performClick();
-                    }
-                }
-                // TODO: 25/10/2017 tot hier
-               final String kleur1 = gok1ImageButton1.getTag().toString()
-                        .substring(2,geefIndexVan_(gok1ImageButton1.getTag().toString()));
-                final String kleur2 = gok1ImageButton2.getTag().toString()
-                        .substring(2,geefIndexVan_(gok1ImageButton2.getTag().toString()));
-                final String kleur3 = gok1ImageButton3.getTag().toString()
-                        .substring(2,geefIndexVan_(gok1ImageButton3.getTag().toString()));
-                final String kleur4 = gok1ImageButton4.getTag().toString()
-                        .substring(2,geefIndexVan_(gok1ImageButton4.getTag().toString()));
+               final String kleur1 = mGok1ImageButton1.getTag().toString()
+                        .substring(2,geefIndexVan_(mGok1ImageButton1.getTag().toString()));
+                final String kleur2 = mGok1ImageButton2.getTag().toString()
+                        .substring(2,geefIndexVan_(mGok1ImageButton2.getTag().toString()));
+                final String kleur3 = mGok1ImageButton3.getTag().toString()
+                        .substring(2,geefIndexVan_(mGok1ImageButton3.getTag().toString()));
+                final String kleur4 = mGok1ImageButton4.getTag().toString()
+                        .substring(2,geefIndexVan_(mGok1ImageButton4.getTag().toString()));
                 final  Pion pion1 = new Pion(){{setKleur(VertaalStringNaarPionKleur(kleur1));}};
                 final  Pion pion2 = new Pion(){{setKleur(VertaalStringNaarPionKleur(kleur2));}};
                 final Pion pion3 = new Pion(){{setKleur(VertaalStringNaarPionKleur(kleur3));}};
@@ -156,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 winsituatie(resultaat);
                 toonResultEnResultScoreButtonsVoorDezeRonde(pion1, pion2, pion3, pion4);
+
 // TODO: 20/10/2017 deze blok is toegevoegd om een intent te maken parcelablespeldata creator is corrupt
 //                Intent intent = new Intent(MainActivity.this, MainActivity.class);
 //
@@ -175,20 +186,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 gokken.add(new Code(pion1, pion2, pion3, pion4));
                 resultaten.add(codeVoorresultaat);
-//                final ParcelableCode parcelableCode = new ParcelableCode(c);////
-//                if (spelData!= null && rondeTeller == spelData.getBeurtTeller()){
-//                    spelData = new ParcelableSpelData(rondeTeller,parcelableCode, gokken, resultaten);
-//                }
-//                intent.putExtra(ParcelableSpelData.SPEL_DATA, spelData);
+
 // TODO: 20/10/2017 tot bovenstaande regel
                 rondeTeller++;
+                if (verliesSituatie()) return;
             }
             private boolean verliesSituatie() {
                 if(rondeTeller >9) {
                     maakCodeZichtbaar();
                     TextView gameOverBoodschap = (TextView) findViewById(R.id.gameOverTextView);
                     gameOverBoodschap.setVisibility(View.VISIBLE);
-                    rondeTeller = activeerReset(doeGokButton);
+                    rondeTeller = activeerReset(mDoeGokButton);
                     return true;
                 }
                 return false;
@@ -216,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                 if (evalueerResultaat(resultaat) == 40){
                    TextView victoryBoodschap = (TextView) findViewById(R.id.gewonnenTextView);
                     maakCodeZichtbaar();
-                   rondeTeller = activeerReset(doeGokButton);
+                   rondeTeller = activeerReset(mDoeGokButton);
                     victoryBoodschap.setVisibility(View.VISIBLE);
                 }
             }

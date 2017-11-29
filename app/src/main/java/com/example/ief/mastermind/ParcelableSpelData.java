@@ -14,10 +14,7 @@ import java.util.List;
 
 public class ParcelableSpelData extends SpelData implements Parcelable{
 
-//    protected int beurtTeller;
-//    protected Code teZoekencode;
-//    protected List<Code> gokken;
-//    protected List<Code> resultaten;
+
     public static final String SPEL_DATA ="com.example.ief.mastermind.SPEL_DATA";
     public static final String SPEL_DATA_CODE ="com.example.ief.mastermind.SPEL_DATA_CODE";
     public static final String SPEL_DATA_GOKKEN ="com.example.ief.mastermind.SPEL_DATA_GOKKEN";
@@ -37,10 +34,7 @@ public class ParcelableSpelData extends SpelData implements Parcelable{
 
     public ParcelableSpelData( int beurtTeller ,Code teZoekencode, List<Code> gokken,  List<Code> resultaten){
         super(beurtTeller, teZoekencode, gokken,resultaten);
-//         super.beurtTeller = beurtTeller;
-//        super.teZoekencode = teZoekencode;
-//        super.gokken = gokken;
-//        super.resultaten = resultaten;
+
         parcelableTeZoekenCode = new ParcelableCode(teZoekencode);
         for(int i = 0 ; i < gokken.size(); i++){
         parcelableGokken[i] = new ParcelableCode(gokken.get(i));
@@ -51,13 +45,9 @@ public class ParcelableSpelData extends SpelData implements Parcelable{
     }
     protected ParcelableSpelData(Parcel in) {
 
-//        ParcelableSpelData(in.readInt(),
-//                in.readParcelable(ParcelableCode.class.getClassLoader(),
-//                        in.readParcelableArray(Parcelable[].class.getClassLoader(),
-//                                in.readParcelableArray(Parcelable[].class.getClassLoader()      ))));
         beurtTeller = in.readInt();
         parcelableTeZoekenCode = in.readParcelable(ParcelableCode.class.getClassLoader());
-        //Parcelable [] parcelableGoks = in.readParcelableArray(ParcelableCode.class.getClassLoader());
+
         parcelableGokken = in.readParcelableArray(ParcelableCode.class.getClassLoader());
         parcelableResultaten = in.readParcelableArray(ParcelableCode.class.getClassLoader());
         System.out.println();
@@ -77,13 +67,7 @@ public class ParcelableSpelData extends SpelData implements Parcelable{
     public void setParcelableGok(int i, ParcelableCode c) {
         this.parcelableGokken[i] = c;
     }
-//    public void addGok(int beurtTeller, ParcelableCode code){
-//        parcelableGokken[beurtTeller -1]= code;
-//    }
-//
-//    public void addResultaat(int beurtTeller, Parcelable code){
-//        parcelableResultaten[beurtTeller-1] = code;
-//    }
+
     public Parcelable[] getParcelableResultaten() {
         return parcelableResultaten;
     }

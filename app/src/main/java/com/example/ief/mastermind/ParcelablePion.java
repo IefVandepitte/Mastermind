@@ -16,9 +16,6 @@ class ParcelablePion  extends Pion implements Parcelable{
        kleur = Kleur.valueOf(in.readString());
     }
 
-//    public ParcelablePion(Kleur kleur) {
-//        super.kleur = kleur;
-//    }
 
     public static final Creator<ParcelablePion> CREATOR = new Creator<ParcelablePion>() {
         @Override

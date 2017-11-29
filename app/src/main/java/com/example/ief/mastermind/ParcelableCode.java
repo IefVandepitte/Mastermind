@@ -25,7 +25,7 @@ class ParcelableCode extends Code implements Parcelable{
         super(_pionnen);
         for ( int i = 0; i < _pionnen.size(); i++){
             final int innerI = i;
-            ParcelablePionnen[i] = new ParcelablePion(/*pionnen.get(i).getKleur()*/){{setKleur(_pionnen.get(innerI).getKleur());}};
+            ParcelablePionnen[i] = new ParcelablePion(){{setKleur(_pionnen.get(innerI).getKleur());}};
         }
     }
 
@@ -57,15 +57,12 @@ class ParcelableCode extends Code implements Parcelable{
                 new Pion(),
                 new Pion());
 
-//        ParcelablePionnen[0] = in.readParcelable(ParcelablePion.class.getClassLoader());
-//        ParcelablePionnen[1] = in.readParcelable(ParcelablePion.class.getClassLoader());
-//        ParcelablePionnen[2] = in.readParcelable(ParcelablePion.class.getClassLoader());
-//        ParcelablePionnen[3] = in.readParcelable(ParcelablePion.class.getClassLoader());
+
 
 
         for (int i = 0; i< super.size(); i++){
             ParcelablePion p = in.readParcelable(ParcelablePion.class.getClassLoader());
-//            super._pionnen.get(i).setKleur(ParcelablePionnen[i].getKleur());
+
             if (p == null) continue;
             super._pionnen.get(i).setKleur(p.getKleur());
         }
@@ -98,7 +95,7 @@ class ParcelableCode extends Code implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        //parcel.writeParcelableArray(ParcelablePionnen, 0);
+
         ParcelablePion [] pionnen = getParcelablePionnen();
        for (ParcelablePion p : pionnen){
            parcel.writeParcelable(p, 0);
