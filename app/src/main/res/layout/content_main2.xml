@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/achtergrond_hout"
-    tools:context="com.example.ief.mastermind.MainActivity">
-
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.ief.mastermind.Main2Activity"
+    tools:showIn="@layout/app_bar_main2"
+    android:background="@drawable/achtergrond_hout">
     <ImageView
         android:id="@+id/code_imageView4"
         android:layout_width="0dp"
